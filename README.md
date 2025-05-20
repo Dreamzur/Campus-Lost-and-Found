@@ -7,4 +7,4 @@ Lost items are hard to report and recover on campus. In this project we have bui
 Come back at a later date to see the project in action!
 
 ## Collaborators 
-#### Christian Stewart | Jonathan Hori | Cristian Pena | Randy Arbolaez | Dahiver Guerra
+**Christian Stewart | Jonathan Hori | Cristian Pena | Randy Arbolaez | Dahiver Guerra**
