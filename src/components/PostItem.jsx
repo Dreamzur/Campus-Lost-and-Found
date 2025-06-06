@@ -2,24 +2,41 @@ import { useState } from 'react';
 import './Modal.css';
 
 export default function PostItem({ onClose, onSubmit }) {
+  const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
-    desc: '',
+    description: '',
     location: '',
-    image: null,
   });
 
   const changeHandler = (e) => {
-    const { name, value, files } = e.target;
-    setFormData({
-      ...formData,
-      [name]: files ? URL.createObjectURL(files[0]) : value,
-    });
+    const { name, value } = e.target;
+    setFormData(f => ({
+      ...f,
+      [name]: value,
+    }));
   };
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
-    onSubmit(formData);
+
+    try {
+      setUploading(true);
+
+      const submitPayload = {
+        title: formData.title,
+        description: formData.description,
+        location: formData.location,
+      };
+
+      await onSubmit(submitPayload);
+
+      setUploading(false);
+      onClose();
+    } catch (err) {
+      setUploading(false);
+      alert(err.message || 'Submission error');
+    }
   };
 
   return (
@@ -37,9 +54,9 @@ export default function PostItem({ onClose, onSubmit }) {
             required
           />
           <textarea
-            name="desc"
+            name="description"
             placeholder="Enter item description..."
-            value={formData.desc}
+            value={formData.description}
             onChange={changeHandler}
             required
           />
@@ -51,14 +68,9 @@ export default function PostItem({ onClose, onSubmit }) {
             onChange={changeHandler}
             required
           />
-          <input
-            name="image"
-            type="file"
-            accept="image/*"
-            onChange={changeHandler}
-            required
-          />
-          <button type="submit">Post Item</button>
+          <button type="submit" disabled={uploading}>
+            {uploading ? 'Submitting...' : 'Post Item'}
+          </button>
         </form>
       </div>
     </div>

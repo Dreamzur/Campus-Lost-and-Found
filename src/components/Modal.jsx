@@ -9,7 +9,7 @@ export default function Modal({ item, onClose }) {
         <button className="close-btn" onClick={onClose}>✖</button>
         <img src={item.image} alt={item.title} />
         <h2>{item.title}</h2>
-        <p>{item.desc}</p>
+        <p>{item.description}</p>
         <p>{item.location}</p>
         <p style={{ fontStyle: 'italic' }}>Currently placeholder text on click.</p>
       </div>

@@ -1,7 +1,7 @@
 import './App.css';
+import { useEffect } from 'react';
 import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
-import items from './data/items';
 import { useState } from 'react';
 import ItemList from './components/ItemsList';
 import ModalManager from './components/ModalManager';
@@ -16,12 +16,38 @@ import ModalManager from './components/ModalManager';
 function App() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [showPostModal, setShowPostModal] = useState(false);
-  const [itemsList, setItemsList] = useState(items);
+  const [itemsList, setItemsList] = useState([]);
 
-  const itemSubmitHandler = (newItem) => {
-    const updated = [...itemsList, { ...newItem, id: Date.now() }];
-    setItemsList(updated);
-    setShowPostModal(false);
+  useEffect(() => {
+    async function fetchItems() {
+      try {
+        const res = await fetch('/api/items');
+        if (!res.ok) throw new Error('Failed to fetch items');
+        const data = await res.json();
+        setItemsList(data);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    fetchItems();
+  }, []);
+
+    const itemSubmitHandler = async (newItem) => {
+    try {
+      const res = await fetch('/api/items', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newItem),
+      });
+      if (!res.ok) throw new Error('Failed to post item');
+
+      const savedItem = await res.json();
+
+      setItemsList(prev => [...prev, savedItem]);
+      setShowPostModal(false);
+    } catch (err) {
+      alert(err.message || 'Failed to post item');
+    }
   };
 
   /* 
