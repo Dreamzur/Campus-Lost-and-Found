@@ -1,10 +1,19 @@
 export default function ItemCard({ item }) {
   return (
     <div className="item-card">
-      {item.image && <img src={item.image} alt={item.title} />}
-      <h3>{item.title}</h3>
-      <p>{item.description}</p>
-      <p>{item.location}</p>
+      {item.image && 
+      <a href={item.image} target="_blank" rel="noopener noreferrer">
+        <img src={item.image} alt={item.title} onClick={() => {console.log("Image clicked")}} />
+      </a>
+      }
+      <h3 className="item-card-title">{item.title}</h3>
+      <p className="item-card-description">{item.desc}</p>
+      <div className="item-card-footer"> 
+        <p className="item-card-footer-location">{item.location}</p>
+        <button className="item-card-footer-contact" onClick={() => {
+          console.log("Send msg");
+        }}>Contact</button>
+      </div>
     </div>
   );
 }
