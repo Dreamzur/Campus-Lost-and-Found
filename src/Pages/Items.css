@@ -1,6 +1,5 @@
 .items-row {
   display: flex;
-  display: inline-flex;
   margin: 1.3rem;
   overflow-x: auto;
   flex-direction: row;
@@ -18,7 +17,7 @@
 }
 
 .item-card {
-  min-width: 200px;
+  /* min-width: 200px; */
   min-height: 300px;
   border-radius: 10px;
   padding: 0 ;
@@ -37,7 +36,6 @@
 }
 
 .item-card-description{
-  /* width: 50%; */
   word-break: break-word;
 }
 
@@ -68,3 +66,10 @@
   cursor: pointer;
   opacity: 1;
 }
+/* 
+.blah {
+  background-color: red;
+  width: 100%;
+  display:inline-block;
+  justify-content: center;
+} */

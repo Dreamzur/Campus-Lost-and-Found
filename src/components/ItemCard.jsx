@@ -11,6 +11,7 @@ export default function ItemCard({ item }) {
       <div className="item-card-footer"> 
         <p className="item-card-footer-location">{item.location}</p>
         <button className="item-card-footer-contact" onClick={() => {
+          // TODO SEND MESSAGE
           console.log("Send msg");
         }}>Contact</button>
       </div>
