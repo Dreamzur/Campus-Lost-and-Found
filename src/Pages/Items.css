@@ -1,15 +1,9 @@
 .items-row {
   display: flex;
-  margin: 1.3rem;
-  overflow-x: auto;
-  flex-direction: row;
   flex-wrap: wrap;
-  gap: 1rem;
-  justify-content:space-evenly;
-  align-items: center;
-  padding-bottom: 1rem;
-  scrollbar-width: thin;
-  scrollbar-color: #888 #f0f0f0;
+  gap: 1.5rem;
+  justify-content: center;
+  padding: 2rem;
 }
 
 .items-row-individual-item{
@@ -17,18 +11,31 @@
 }
 
 .item-card {
-  /* min-width: 200px; */
-  min-height: 300px;
+  width: 250px;
+  height: 380px;
+  background: white;
   border-radius: 10px;
-  padding: 0 ;
-  box-shadow: 0 5px 5px rgba(0,0,0,0.1);
-  text-align: center;
+  padding: 1rem;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.3s ease;
+}
+
+.item-card:hover {
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
 
 .item-card img {
   width: 100%;
-  max-height: 15rem;
-  border-radius: 8px 8px 0 0;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.item-card-title {
+  font-weight: bold;
+  margin-top: 0.5rem;
 }
 
 .item-card p {
@@ -36,30 +43,34 @@
 }
 
 .item-card-description{
-  word-break: break-word;
+  flex-grow: 1;
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
 }
 
 .item-card-footer {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #eee;
+  padding-top: 0.5rem;
 }
 
 .item-card-footer-location{
-  width: 100%;
-  word-wrap: normal;
+  font-size: 0.85rem;
+  color: #555;
 }
 
 .item-card-footer-contact{
   background: #B6862C;
-  border-color: transparent;
-  opacity: 0.6;
-  color: #f0f0f0;
-  padding: 0.7rem;
-  font-size: 0.9rem;
-  border-radius: 0 0 10px 0;
-  width: 40%;
-  transition: 0.3;
+  border: none;
+  opacity: 0.8;
+  color: white;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  transition: 0.3s;
   font-weight: bold;
-  align-self: flex-end;
 }
 
 .item-card-footer-contact:hover{
