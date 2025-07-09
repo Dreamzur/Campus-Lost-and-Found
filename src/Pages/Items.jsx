@@ -7,33 +7,45 @@ let newarr = Items;
 
 export default function ShowItem() {
 	const [inputValue, setInputValue] = useState('');
+	const [searched, setSearched] = useState('');
 
-	const handleInput = (event) => {
-		setInputValue(event.target.value);
-		searchItems(event.target.value, Items);
+	const handleInput = ({target: {value}}) => {
+		setInputValue(value);
+		searchItems(value, Items);
+		if(newarr.length >1){
+			setSearched(false);
+		}
 	};
 
 	function searchItems(input, Items){
 		console.log(input)
 		newarr = Items.filter((item) => (item.title.toLowerCase().includes(input.toLowerCase())) || (item.desc.toLowerCase().includes(input.toLowerCase())));
-		console.log("Choices: ", newarr);
 		return newarr;
 	}
 
 	return (
-		<div className='blah'>
-			<input placeholder="Search Lost Items" value={inputValue} onChange={handleInput} />
-			{((newarr.length != 0) && !(inputValue === "")) && <ul>
-				{
-					newarr.map((i) => 
-						<li key={i.id} onClick={() => {
-							setInputValue(i.title);
-							searchItems(i.title, Items);
-						}}>{i.title}</li>
-					)
+		<div>
+			<div  className='search-div'>
+				<input className='search-bar' placeholder="Search Lost Items" value={inputValue} onChange={handleInput} />
+				{(((newarr.length > 1) && !(inputValue === "") && !searched))  && <ul className='search-result'>
+					{
+						newarr.map((i) => 
+							<li className='search-individual-result' tabIndex="0" onKeyDown={({key}) => {
+								if(key == "Enter"){
+									setInputValue(i.title);
+									searchItems(i.title, Items);
+									setSearched(true);
+								}
+							}} key={i.id} onClick={() => {
+								setInputValue(i.title);
+								searchItems(i.title, Items);
+								setSearched(true);
+							}}>{i.title}</li>
+						)
+					}
+					</ul>
 				}
-				</ul>
-			}
+			</div>
 			<ItemsList items={newarr} />
 		</div>
 	);
