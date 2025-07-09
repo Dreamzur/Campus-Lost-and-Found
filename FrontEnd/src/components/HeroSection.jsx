@@ -10,7 +10,7 @@ export default function HeroSection({ onRecentClick }) {
         <h2>Your campus item recovery hub</h2>
         <div className="hero-buttons">
           <button className="base-button lost-button" onClick={() => navigate('/report')}>Report Lost Item</button>
-          <button className="base-button recent-post" onClick={onRecentClick}>View Recent Posts</button>
+          <button className="base-button recent-post" onClick={() => navigate('/items')}>View Recent Posts</button>
         </div>
       </div>
     </section>

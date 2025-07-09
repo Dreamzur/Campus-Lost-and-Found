@@ -7,6 +7,8 @@ import { useRef } from 'react';
 
 /* 
   - itemsList: is for the display of items in the row, temp items are in the ./data/items.js
+  - ##### temp items are outdated and not used anymore // we have an db for it now #####
+  - ##### have to figure out a way to link submissions to the /items page #####
 
 */
 function App() {
@@ -23,7 +25,7 @@ function App() {
           const data = await fetchItems();
           setItemsList(data);
         } catch (err) {
-          console.error('Failed to laod items:', err.message);
+          console.error('Failed to load items:', err.message);
         }
       }
 

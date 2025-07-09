@@ -109,32 +109,3 @@ body {
   color: #333;
   font-weight: bold;
 }
-
-.items-row {
-  display: flex;
-  overflow-x: auto;
-  gap: 1rem;
-  padding-bottom: 1rem;
-  scrollbar-width: thin;
-  scrollbar-color: #888 #f0f0f0;
-}
-
-.item-card {
-  min-width: 200px;
-  min-height: 300px;
-  background: white;
-  border-radius: 10px;
-  padding: 1rem;
-  box-shadow: 0 5px 5px rgba(0,0,0,0.1);
-  text-align: center;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-}
-
-.item-card img {
-  width: 100%;
-  height: 130px;
-  object-fit: cover;
-  border-radius: 8px;
-}
