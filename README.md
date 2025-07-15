@@ -4,7 +4,14 @@ Lost items are hard to report and recover on campus. In this project we have bui
 
 ## In Development
 
-Come back at a later date to see the project in action!
+#### Currently Working on:
+* Tweaks to the Frontend & Backend
+* Creating Admin Panel / Admin login
+* Mobile Experience
+* Home Page How-to Section
+* Item filter
+* Follow-up / Notifications
+* Item Claim
 
 ## How to Run
 
@@ -28,6 +35,7 @@ npm run dev
 * Vite
 * HTML/CSS
 * JavaScript
+* Java Spring Boot
   
 ## Collaborators 
 **Christian Stewart | Jonathan Hori | Cristian Pena | Randy Arbolaez | Dahiver Guerra**
