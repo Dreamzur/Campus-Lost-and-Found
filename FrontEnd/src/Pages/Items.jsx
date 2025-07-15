@@ -19,7 +19,7 @@ export default function ShowItem() {
 
 	function searchItems(input, Items){
 		console.log(input)
-		newarr = Items.filter((item) => (item.title.toLowerCase().includes(input.toLowerCase())) || (item.desc.toLowerCase().includes(input.toLowerCase())));
+		newarr = Items.filter((item) => (item.title.toLowerCase().includes(input.toLowerCase())) || (item.description.toLowerCase().includes(input.toLowerCase())));
 		return newarr;
 	}
 
