@@ -14,14 +14,19 @@ public class LostItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String title;
     private String description;
     private String imageUrl;
+    private String location;
 
-    public LostItem() {}
+    public LostItem() {
+    }
 
-    public LostItem(String description, String imageUrl) {
+    public LostItem(String title, String description, String imageUrl, String location) {
+        this.title = title;
         this.description = description;
-        this.imageUrl    = imageUrl;
+        this.imageUrl = imageUrl;
+        this.location = location;
     }
 
     public Long getId() {
@@ -30,6 +35,14 @@ public class LostItem {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDescription() {
@@ -46,5 +59,13 @@ public class LostItem {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }
