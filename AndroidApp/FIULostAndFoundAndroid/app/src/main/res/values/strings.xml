@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">FIULostAndFound</string>
+    <string name="redirect_lost">All Lost Items</string>
+    <string name="title_activity_lost_items">LostItemsActivity</string>
+    <string name="title_activity_found_items">FoundItemsActivity</string>
+    <string name="title_activity_submit_item">SubmitItemActivity</string>
+</resources>
