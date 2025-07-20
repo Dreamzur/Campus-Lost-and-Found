@@ -8,6 +8,12 @@ import com.example.fiulostandfound.data.Item
 import retrofit2.Response
 
 interface ApiService {
+
+    @POST("api/login")
+    suspend fun login(@Body req: LoginRequest): Response<LoginResponse>
+
+    @POST("/api/register")
+    suspend fun register(@Body req: RegisterRequest): AuthResponse
     @GET("api/lost")
     suspend fun getLost(): Response<List<Item>>
     @GET("api/found")

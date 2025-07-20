@@ -98,49 +98,45 @@ fun HomeScreen(
     foundItems: List<Item>,
     onLostClick: () -> Unit,
     onFoundClick: () -> Unit,
-    onReportLostClick: () -> Unit = {},
-    onReportFoundClick: () -> Unit = {}
+    onReportLostClick: () -> Unit,   // ← new
+    onReportFoundClick: () -> Unit   // ← new
 ) {
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("FIU Lost & Found") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor   = MaterialTheme.colorScheme.primary,
-                    titleContentColor= MaterialTheme.colorScheme.onPrimary
-                )
-            )
-        }
+        topBar = { /* … */ }
     ) { padding ->
         Column(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(padding)
                 .padding(16.dp)
-                .fillMaxSize()
         ) {
             Text("Lost Items", style = MaterialTheme.typography.titleLarge)
             Spacer(Modifier.height(8.dp))
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(lostItems.take(10)) { item -> ItemCard(item) }
-            }
+            LazyRow { /* … show lostItems … */ }
             Spacer(Modifier.height(8.dp))
-            Button(onClick = onLostClick, Modifier.fillMaxWidth()) {
-                Text("View All Lost Items")
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = onLostClick, modifier = Modifier.weight(1f)) {
+                    Text("View All Lost")
+                }
+                Button(onClick = onReportLostClick, modifier = Modifier.weight(1f)) {
+                    Text("Report Lost")
+                }
             }
-            Button(onClick = onReportLostClick) { Text("Report Lost") }
 
             Spacer(Modifier.height(16.dp))
 
             Text("Found Items", style = MaterialTheme.typography.titleLarge)
             Spacer(Modifier.height(8.dp))
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(foundItems.take(10)) { item -> ItemCard(item) }
-            }
+            LazyRow { /* … show foundItems … */ }
             Spacer(Modifier.height(8.dp))
-            Button(onClick = onFoundClick, Modifier.fillMaxWidth()) {
-                Text("View All Found Items")
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = onFoundClick, modifier = Modifier.weight(1f)) {
+                    Text("View All Found")
+                }
+                Button(onClick = onReportFoundClick, modifier = Modifier.weight(1f)) {
+                    Text("Report Found")
+                }
             }
-            Button(onClick = onReportFoundClick) { Text("Report Found") }
         }
     }
 }
