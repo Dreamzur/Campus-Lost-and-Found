@@ -14,13 +14,17 @@ class RegisterViewModel : ViewModel() {
     var password = ""
     var confirmPassword = ""
 
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
     private val _errorMsg = MutableStateFlow<String?>(null)
     val errorMsg = _errorMsg.asStateFlow()
 
-    fun register(onRegistered: ERROR, password1: Any, confirmPassword1: Any, function: () -> Unit) {
+    fun register( username: String,
+                  password: String,
+                  confirmPassword: String,
+                  ) {
         if (password != confirmPassword) {
             _errorMsg.value = "Passwords do not match"
             return
@@ -32,7 +36,6 @@ class RegisterViewModel : ViewModel() {
                 val resp = RetrofitClient
                     .api
                     .register(RegisterRequest(username, password))
-                onRegistered(resp.token)
             } catch (e: Exception) {
                 _errorMsg.value = "Registration failed: ${e.message}"
             } finally {

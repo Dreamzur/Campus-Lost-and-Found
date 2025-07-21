@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class UserService implements UserDetailsService {
   
@@ -23,14 +25,17 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-
+@Transactional
     public User register(String username, String rawPassword) {
-        String encoded = passwordEncoder.encode(rawPassword);
-        User u = new User();
-        u.setUsername(username);
-        u.setPasswordHash(encoded);
-        return userRepo.save(u);
+    if (userRepo.existsByUsername(username)) {
+        throw new IllegalArgumentException("Username already taken: " + username);
     }
+    String encoded = passwordEncoder.encode(rawPassword);
+    User u = new User();
+    u.setUsername(username);
+    u.setPasswordHash(encoded);
+    return userRepo.save(u);
+}
 
     @Override
     public UserDetails loadUserByUsername(String username)
@@ -44,6 +49,10 @@ public class UserService implements UserDetailsService {
             u.getPasswordHash(),
             Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
         );
+    }
+
+    public boolean usernameExists(String username) {
+        return userRepo.existsByUsername(username);
     }
 }
 
