@@ -1,6 +1,7 @@
 // src/main/java/com/example/fiulostandfound/ui/RegisterScreen.kt
 package com.example.fiulostandfound.ui
 
+import android.widget.Toast
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,6 +34,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -46,6 +48,7 @@ fun RegisterScreen(
     onRegistered: () -> Unit,
     onBack: () -> Unit
 ) {
+    val context       = LocalContext.current
     var username        by rememberSaveable { mutableStateOf("") }
     var password        by rememberSaveable { mutableStateOf("") }
     var confirmPassword by rememberSaveable { mutableStateOf("") }
@@ -127,11 +130,20 @@ fun RegisterScreen(
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             } else {
                 Button(
-                    onClick = { viewModel.register(
-                        username, password,
-                        confirmPassword = confirmPassword
-
-                    ) },
+                    onClick = {
+                        viewModel.register(
+                            username        = username,
+                            password        = password,
+                            confirmPassword = confirmPassword
+                        ) { success ->
+                            if (success) {
+                                Toast
+                                    .makeText(context, "Successfully registered", Toast.LENGTH_SHORT)
+                                    .show()
+                                onRegistered()
+                            }
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Register")

@@ -24,20 +24,22 @@ class RegisterViewModel : ViewModel() {
     fun register( username: String,
                   password: String,
                   confirmPassword: String,
-                  ) {
+                  onResult: (Boolean) -> Unit
+    ) {
         if (password != confirmPassword) {
             _errorMsg.value = "Passwords do not match"
+            onResult(false)
             return
         }
-        _errorMsg.value = null
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val resp = RetrofitClient
-                    .api
-                    .register(RegisterRequest(username, password))
+                // your retrofit call, for example:
+                RetrofitClient.api.register(RegisterRequest(username, password))
+                onResult(true)
             } catch (e: Exception) {
-                _errorMsg.value = "Registration failed: ${e.message}"
+                _errorMsg.value = e.message ?: "Registration failed"
+                onResult(false)
             } finally {
                 _isLoading.value = false
             }
