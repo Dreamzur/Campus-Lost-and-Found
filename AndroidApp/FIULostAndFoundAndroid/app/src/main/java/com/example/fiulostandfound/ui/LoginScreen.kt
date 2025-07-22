@@ -1,6 +1,7 @@
 package com.example.fiulostandfound.ui
 
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -21,6 +23,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material3.TextButton
+import androidx.compose.ui.res.painterResource
+import com.example.fiulostandfound.R
 
 @Composable
 fun LoginScreen(
@@ -36,14 +40,22 @@ fun LoginScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.Center
     ) {
-        TextField(
+        Image(
+            painter = painterResource(id = R.drawable.ic_launcher_foreground),  // replace with your own
+            contentDescription = "App Logo",
+            modifier = Modifier.size(120.dp)
+        )
+
+        Spacer(Modifier.height(24.dp))
+
+        OutlinedTextField(
             value = ui.username,
             onValueChange = { ui.username = it },
             label = { Text("Username") },
             singleLine = true
         )
         Spacer(Modifier.height(8.dp))
-        TextField(
+        OutlinedTextField(
             value = ui.password,
             onValueChange = { ui.password = it },
             label = { Text("Password") },

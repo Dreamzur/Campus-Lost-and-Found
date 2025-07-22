@@ -16,7 +16,7 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class UserService implements UserDetailsService {
-  
+
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
 
