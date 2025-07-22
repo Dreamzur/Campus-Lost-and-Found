@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
 @Entity
 public class FoundItem {
 
@@ -14,11 +15,12 @@ public class FoundItem {
     private String description;
     private String imageUrl;
 
-    public FoundItem() {}
+    public FoundItem() {
+    }
 
     public FoundItem(String description, String imageUrl) {
         this.description = description;
-        this.imageUrl    = imageUrl;
+        this.imageUrl = imageUrl;
     }
 
     public Long getId() {

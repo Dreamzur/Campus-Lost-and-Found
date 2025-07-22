@@ -1,10 +1,6 @@
 package com.example.demo.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "lost_items")
@@ -15,18 +11,26 @@ public class LostItem {
     private Long id;
 
     private String title;
+
     private String description;
-    private String imageUrl;
+
     private String location;
+
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean approved;
+
+    @Lob
+    @Column(name = "image", columnDefinition = "LONGBLOB")
+    private byte[] image;
 
     public LostItem() {
     }
 
-    public LostItem(String title, String description, String imageUrl, String location) {
+    public LostItem(String title, String description, String location, byte[] image) {
         this.title = title;
         this.description = description;
-        this.imageUrl = imageUrl;
         this.location = location;
+        this.image = image;
     }
 
     public Long getId() {
@@ -53,14 +57,6 @@ public class LostItem {
         this.description = description;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
     public String getLocation() {
         return location;
     }
@@ -68,4 +64,21 @@ public class LostItem {
     public void setLocation(String location) {
         this.location = location;
     }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
+    public boolean isApproved() {
+        return approved;
+    }
+
+    public void setApproved(boolean approved) {
+        this.approved = approved;
+    }
+
 }

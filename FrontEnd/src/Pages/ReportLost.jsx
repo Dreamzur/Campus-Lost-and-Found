@@ -9,17 +9,26 @@ export default function ReportLost() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    location: ''
+    location: '',
+    image: null,
   });
 
   const [uploading, setUploading] = useState(false);
 
   const changeHandler = (e) => {
-    const { name, value } = e.target;
-    setFormData(f => ({
-      ...f,
-      [name]: value
-    }));
+    const { name, value, files } = e.target;
+
+    if (name === 'image') {
+      setFormData(f => ({
+        ...f,
+        image: files[0]
+      }));
+    } else {
+      setFormData(f => ({
+        ...f,
+        [name]: value
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -28,11 +37,14 @@ export default function ReportLost() {
     try {
       setUploading(true);
 
-      const submitPayload = {
-        title: formData.title,
-        description: formData.description,
-        location: formData.location,
-      };
+      const submitPayload = new FormData();
+      submitPayload.append("title", formData.title);
+      submitPayload.append("description", formData.description);
+      submitPayload.append("location", formData.location);
+
+      if (formData.image) {
+        submitPayload.append("image", formData.image);
+      }
 
       await itemSubmitHandler(submitPayload);
 
@@ -112,7 +124,10 @@ export default function ReportLost() {
           <div>
             <label>Upload Image</label>
             <input 
-            type="file" 
+            type="file"
+            name="image"
+            accept="image/*"
+            onChange={changeHandler}
             />
           </div>
 
