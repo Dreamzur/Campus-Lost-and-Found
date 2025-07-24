@@ -7,15 +7,8 @@ import Items from './Pages/Items.jsx';
 import Layout from './components/Layout.jsx';
 import AdminDashboard from './Pages/AdminDashboard.jsx';
 import { itemSubmitHandler } from './utils/api.js';
-import UserLogin from './Pages/UserLogin.jsx';
-import Register from './Pages/Register.jsx';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext';
 import AuthForm from './Pages/AuthForm.jsx';
-
-function ProtectedRoute({ children }) {
-  const { isLoggedIn } = useAuth();
-  return isLoggedIn ? children : <UserLogin />;
-}
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -27,11 +20,7 @@ createRoot(document.getElementById('root')).render(
             <Route path="report" element={<ReportLost onSubmitPost={itemSubmitHandler} />} />
             <Route path="items" element={<Items />} />
             <Route path="auth" element={<AuthForm />} />
-            <Route path="admin-dashboard" element={
-              <ProtectedRoute>
-                <AdminDashboard />
-              </ProtectedRoute>
-            } />
+            <Route path="admin-dashboard" element={<AdminDashboard />} />
           </Route>
         </Routes>
       </BrowserRouter>
