@@ -9,83 +9,92 @@ export default function AuthForm() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { setIsLoggedIn } = useAuth();
+
+  const { loginWithToken } = useAuth();
 
   const toggleMode = () => {
-    setIsRegistering(prev => !prev);
+    setIsRegistering((prev) => !prev);
     setMessage("");
     setError("");
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
-  setMessage("");
+    e.preventDefault();
+    setError("");
+    setMessage("");
 
-  const endpoint = isRegistering ? "/register" : "/login";
+    const endpoint = isRegistering ? "/register" : "/login";
 
-  try {
-    // register or loign
-    const res = await fetch(`http://localhost:8080/api${endpoint}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
-
-    const isJson = res.headers.get("content-type")?.includes("application/json");
-    const data = isJson ? await res.json() : {};
-
-    if (!res.ok) {
-      const errorMsg = isJson ? data.message : await res.text();
-      throw new Error(errorMsg || "Something went wrong");
-    }
-
-    // login after registration
-    if (isRegistering) {
-      const loginRes = await fetch("http://localhost:8080/api/login", {
+    try {
+      const res = await fetch(`http://localhost:8080/api${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      const loginData = await loginRes.json();
+      const isJson = res.headers.get("content-type")?.includes("application/json");
+      const data = isJson ? await res.json() : {};
 
-      if (!loginRes.ok || !loginData.token) {
-        throw new Error("Registered, but auto-login failed.");
+      if (!res.ok) {
+        const errorMsg = isJson ? data.message : await res.text();
+        throw new Error(errorMsg || "Something went wrong");
       }
 
-      localStorage.setItem("token", loginData.token);
-      setIsLoggedIn(true);
-      navigate("/");
-      return;
-    }
+      // login automatically after user registration
+      if (isRegistering) {
+        const loginRes = await fetch("http://localhost:8080/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
 
-    // reg login # although need to create admin priv.
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-      setIsLoggedIn(true);
-      navigate("/");
-    }
+        const loginData = await loginRes.json();
 
-  } catch (err) {
-    setError(err.message);
-  }
-};
+        if (!loginRes.ok || !loginData.token) {
+          throw new Error("Registered, but auto-login failed.");
+        }
+
+        loginWithToken(loginData.token);
+        navigate("/");
+        return;
+      }
+
+      // Login
+      if (data.token) {
+        loginWithToken(data.token);
+        navigate("/");
+      }
+
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   return (
     <div className="auth-form-container">
       <h2>{isRegistering ? "Register" : "Login"}</h2>
       <form onSubmit={handleSubmit} className="auth-form">
         <label>Username</label>
-        <input name="username" value={formData.username} onChange={handleChange} required />
+        <input
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+          required
+        />
 
         <label>Password</label>
-        <input name="password" type="password" value={formData.password} onChange={handleChange} required />
+        <input
+          name="password"
+          type="password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
 
         <button type="submit">{isRegistering ? "Register" : "Login"}</button>
 
@@ -94,7 +103,7 @@ export default function AuthForm() {
       </form>
 
       <p>
-        {isRegistering ? "Already have an account?" : "Don't have an account?"}
+        {isRegistering ? "Already have an account?" : "Don't have an account?"}{" "}
         <button onClick={toggleMode} className="toggle-btn">
           {isRegistering ? "Login" : "Register"}
         </button>
