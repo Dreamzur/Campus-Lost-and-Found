@@ -41,7 +41,8 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username)
         throws UsernameNotFoundException {
 
-        User u = userRepo.findByUsername(username)
+        User u = userRepo.findByUsernameIgnoreCase(username)
+            .filter(dbUser -> dbUser.getUsername().equals(username))
             .orElseThrow(() -> new UsernameNotFoundException("No user: "+ username));
 
         return new org.springframework.security.core.userdetails.User(

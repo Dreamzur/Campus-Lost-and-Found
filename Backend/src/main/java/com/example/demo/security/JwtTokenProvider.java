@@ -30,8 +30,8 @@ public class JwtTokenProvider {
 
     @PostConstruct
     public void init() {
-    
-        this.key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(jwtSecret));
+        byte[] secretBytes = Base64.getDecoder().decode(jwtSecret);
+        this.key = Keys.hmacShaKeyFor(secretBytes);
     }
 
     public String generateToken(UserDetails userDetails) {
@@ -39,21 +39,22 @@ public class JwtTokenProvider {
         Date exp = new Date(now.getTime() + jwtExpirationMs);
 
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(now)
-                .setExpiration(exp)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-    }
+                    .setSubject(userDetails.getUsername())
+                    .setIssuer(jwtIssuer)
+                    .setIssuedAt(now)
+                    .setExpiration(exp)
+                    .signWith(key, SignatureAlgorithm.HS256)
+                    .compact();
+    }   
 
     public String getUsernameFromToken(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
-    }
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+    }   
 
     public boolean validateToken(String token) {
         try {

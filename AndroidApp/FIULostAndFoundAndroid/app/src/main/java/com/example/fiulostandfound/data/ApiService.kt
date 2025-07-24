@@ -1,4 +1,4 @@
-// app/src/main/java/com/example/fiulostandfound/data/ApiService.kt
+
 package com.example.fiulostandfound.data
 
 import retrofit2.http.Body
@@ -12,7 +12,7 @@ interface ApiService {
     @POST("api/login")
     suspend fun login(@Body req: LoginRequest): Response<LoginResponse>
 
-    @POST("/api/register")
+    @POST("api/register")
     suspend fun register(@Body req: RegisterRequest): AuthResponse
     @GET("api/lost")
     suspend fun getLost(): Response<List<Item>>

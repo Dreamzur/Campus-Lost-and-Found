@@ -38,12 +38,12 @@ fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),  // replace with your own
+            painter = painterResource(id = R.drawable.ic_lost_app_logo),
             contentDescription = "App Logo",
-            modifier = Modifier.size(120.dp)
+            modifier = Modifier.size(240.dp)
         )
 
         Spacer(Modifier.height(24.dp))
