@@ -19,7 +19,6 @@ import com.example.demo.service.UserService;
 import com.example.demo.web.dto.LoginRequest;
 import com.example.demo.web.dto.LoginResponse;
 import com.example.demo.web.dto.RegisterDto;
-import com.example.demo.web.dto.RegisterResponse;
 
 @RestController
 @RequestMapping("/api")
@@ -71,6 +70,8 @@ public class AuthController {
 
     // new usee
     User created = userService.register(dto.getUsername(), dto.getPassword());
+
+    System.out.println("Registered user: " + created.getUsername() + ", role: " + created.getRole());
 
     // auth registered user
     try {
