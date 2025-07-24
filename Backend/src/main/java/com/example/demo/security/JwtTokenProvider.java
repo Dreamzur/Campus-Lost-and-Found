@@ -3,8 +3,10 @@ package com.example.demo.security;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -35,11 +37,18 @@ public class JwtTokenProvider {
   }
 
   public String generateToken(UserDetails userDetails) {
+    String role = userDetails.getAuthorities().stream()
+        .findFirst()
+        .map(GrantedAuthority::getAuthority)
+        .orElse("ROLE_USER");
+
     Date now = new Date();
     Date exp = new Date(now.getTime() + jwtExpirationMs);
 
     return Jwts.builder()
         .setSubject(userDetails.getUsername())
+        .claim("roles", List.of(role))
+        .setIssuer(jwtIssuer)
         .setIssuedAt(now)
         .setExpiration(exp)
         .signWith(key, SignatureAlgorithm.HS256)
@@ -53,6 +62,16 @@ public class JwtTokenProvider {
         .parseClaimsJws(token)
         .getBody()
         .getSubject();
+  }
+
+  @SuppressWarnings("unchecked")
+  public List<String> getRolesFromToken(String token) {
+    return (List<String>) Jwts.parserBuilder()
+        .setSigningKey(key)
+        .build()
+        .parseClaimsJws(token)
+        .getBody()
+        .get("roles", List.class);
   }
 
   public boolean validateToken(String token) {
