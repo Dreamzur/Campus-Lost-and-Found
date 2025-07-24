@@ -34,6 +34,7 @@ public class UserService implements UserDetailsService {
     User u = new User();
     u.setUsername(username);
     u.setPasswordHash(encoded);
+    u.setRole("ROLE_USER");
     return userRepo.save(u);
   }
 
@@ -47,7 +48,7 @@ public class UserService implements UserDetailsService {
     return new org.springframework.security.core.userdetails.User(
         u.getUsername(),
         u.getPasswordHash(),
-        Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+        Collections.singletonList(new SimpleGrantedAuthority(u.getRole())));
   }
 
   public boolean usernameExists(String username) {
