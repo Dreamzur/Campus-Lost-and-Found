@@ -138,7 +138,9 @@ export default function ReportLost() {
             placeholder="Any details, or information to help identify the item."
             value={formData.description}
             onChange={changeHandler}
+            maxLength={240}
             />
+            <small>{formData.description.length}/240 characters</small>
           </div>
 
           <div className="full-width">
