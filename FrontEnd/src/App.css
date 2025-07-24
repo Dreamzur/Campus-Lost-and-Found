@@ -1,3 +1,6 @@
+/* ---------------------------------------------
+   Base Styles
+--------------------------------------------- */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -9,6 +12,9 @@ body {
   /* padding: 1rem; */
 }
 
+/* ---------------------------------------------
+   Navbar Styles
+--------------------------------------------- */
 .navbar {
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -65,6 +71,9 @@ body {
   text-decoration: underline;
 }
 
+/* ---------------------------------------------
+   Hero Section
+--------------------------------------------- */
 .hero {
   display: flex;
   flex-direction: column;
@@ -84,7 +93,7 @@ body {
 .hero-darken {
   position: absolute;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.4); /* dark overlay */
   z-index: 1;
 }
 
@@ -108,9 +117,11 @@ body {
   gap: 1rem;
   justify-content: center;
   margin-top: 1.5rem;
-
 }
 
+/* ---------------------------------------------
+   Button Styles
+--------------------------------------------- */
 .base-button {
   color: white;
   font-size: 1rem;
@@ -120,6 +131,7 @@ body {
   cursor: pointer;
   min-width: 160px;
 }
+
 .lost-button {
   background-color: #081E3F;
 }
@@ -136,6 +148,9 @@ body {
   background-color: #8f6b29;
 }
 
+/* ---------------------------------------------
+   Footer
+--------------------------------------------- */
 .footer {
   text-align: center;
   padding: 2rem 1rem;
