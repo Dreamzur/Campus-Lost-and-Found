@@ -82,6 +82,36 @@ class ItemViewModel : ViewModel() {
         }
     }
 
+    suspend fun postLostBlocking(item: Item): Boolean {
+        return try {
+            val resp = RetrofitClient.api.postLost(item)
+            if (!resp.isSuccessful) {
+                Log.e("ItemVM", "postLost failed: ${resp.code()} / ${resp.errorBody()?.string()}")
+            }
+            resp.isSuccessful
+        } catch (e: Exception) {
+            Log.e("ItemVM", "postLost exception", e)
+            false
+        }
+    }
+
+
+    suspend fun postFoundBlocking(item: Item): Boolean {
+        return try {
+            val resp = RetrofitClient.api.postFound(item)
+            if (!resp.isSuccessful) {
+                Log.e("ItemVM", "postFound failed: ${resp.code()} / ${resp.errorBody()?.string()}")
+            }
+            resp.isSuccessful
+        } catch (e: Exception) {
+            Log.e("ItemVM", "postFound exception", e)
+            false
+        }
+    }
+
+
+
+
     fun addFound(item: Item) = viewModelScope.launch {
         try {
             val postResp = RetrofitClient.api.postFound(item)

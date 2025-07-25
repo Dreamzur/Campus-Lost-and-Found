@@ -3,65 +3,41 @@ package com.example.fiulostandfound
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.fiulostandfound.ui.theme.FIULostAndFoundTheme
 import com.example.fiulostandfound.data.Item
+import com.example.fiulostandfound.ui.AddItemForm
+import com.example.fiulostandfound.ui.theme.FIUTheme
+import com.example.fiulostandfound.ui.GridScreen
+import com.example.fiulostandfound.ui.ItemViewModel
 
 class FoundItemsActivity : ComponentActivity() {
+    private val viewModel by viewModels<ItemViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        viewModel.loadAll()  // fetch from backend
+
         setContent {
-            FIULostAndFoundTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    ItemList2(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
+            FIUTheme {
+                Column(modifier = Modifier
+                    .fillMaxSize()
+                    .padding(0.dp)
+                ) {
+                    GridScreen(
+                        title = "Found Items",
+                        itemsList = viewModel.foundItems.collectAsState().value
                     )
                 }
             }
         }
     }
 }
-
-@Composable
-fun ItemList2(name: String, modifier: Modifier = Modifier) {
-    LazyVerticalGrid(
-        GridCells.Adaptive(200.dp),
-
-        ) {
-        item(span = { GridItemSpan(this.maxLineSpan) }) {
-
-        }
-        items(10) { index ->
-            Column {
-                Text(
-                    text = "Item $index",
-                    modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-        }
-    }
-}
-
-    @Preview(showBackground = true)
-    @Composable
-    fun GreetingPreview3() {
-        FIULostAndFoundTheme {
-            ItemList2("Android")
-        }
-    }

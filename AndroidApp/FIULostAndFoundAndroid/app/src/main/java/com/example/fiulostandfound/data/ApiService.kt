@@ -9,17 +9,17 @@ import retrofit2.Response
 
 interface ApiService {
 
-    @POST("api/login")
+    @POST("/api/login")
     suspend fun login(@Body req: LoginRequest): Response<LoginResponse>
 
-    @POST("api/register")
+    @POST("/api/register")
     suspend fun register(@Body req: RegisterRequest): AuthResponse
-    @GET("api/lost")
+    @GET("/api/lost")
     suspend fun getLost(): Response<List<Item>>
-    @GET("api/found")
+    @GET("/api/found")
     suspend fun getFound(): Response<List<Item>>
-    @POST("api/lost")
+    @POST("/api/lost")
     suspend fun postLost(@Body item: Item): Response<Item>
-    @POST("api/found")
+    @POST("/api/found")
     suspend fun postFound(@Body item: Item): Response<Item>
 }
