@@ -22,7 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-
+import androidx.compose.runtime.saveable.rememberSaveable
 
 
 @Composable
@@ -30,8 +30,8 @@ fun AddItemForm(
     onSubmit: (Item) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var description by remember { mutableStateOf("") }
-    var imageUrl   by remember { mutableStateOf("") }
+    var description by rememberSaveable { mutableStateOf("") }
+    var imageUrl    by rememberSaveable { mutableStateOf("") }
 
     Column(
         modifier = modifier
@@ -57,9 +57,9 @@ fun AddItemForm(
         Button(
             onClick = {
                 if (description.isNotBlank() && imageUrl.isNotBlank()) {
-                    onSubmit(Item(description = description, imageUrl = imageUrl))
-                    description = ""
-                    imageUrl = ""
+                    onSubmit(Item(
+                        image_url    = imageUrl,
+                        description = description))
                 }
             },
             modifier = Modifier.align(Alignment.End)

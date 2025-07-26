@@ -10,20 +10,27 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "found_items")
 public class FoundItem {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+
     @Column(name = "image_url", nullable = false)
     private String imageUrl;
-    @Column(name = "description", nullable = true)
+
+    @Column(nullable = false)
     private String description;
-    @Column(name = "location", nullable = true)
+
+
+    @Column(name = "location")
     private String location;
-    @Column(name = "title", nullable = true)
+
+    @Column(name = "title")
     private String title;
 
-    public FoundItem() {}
+
+    public FoundItem(){}
+
 
     public FoundItem(String imageUrl, String description, String location, String title) {
         this.imageUrl   = imageUrl;
@@ -32,19 +39,37 @@ public class FoundItem {
         this.title       = title;
     }
 
-    // --- getters & setters ---
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    // getters & setters
 
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getImageUrl() {
+        return imageUrl;
+    }
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
-    public String getLocation() { return location; }
-    public void setLocation(String location) { this.location = location; }
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public String getLocation() {
+        return location;
+    }
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 }

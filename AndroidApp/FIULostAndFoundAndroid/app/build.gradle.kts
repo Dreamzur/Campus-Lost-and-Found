@@ -92,6 +92,7 @@ dependencies {
     implementation(libs.coroutinesAndroid)
     implementation(libs.firebase.appdistribution.gradle)
     implementation(libs.play.services.games.v2)
+    implementation(libs.gson)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

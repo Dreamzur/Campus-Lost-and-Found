@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,18 +10,26 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "lost_items")
 public class LostItem {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
-    private String description;
+
+    @Column(name = "image_url", nullable = false)
     private String imageUrl;
+
+    @Column(nullable = false)
+    private String description;
+
+
+    @Column(name = "location")
     private String location;
 
-    public LostItem() {
-    }
+    @Column(name = "title")
+    private String title;
+
+
+    public LostItem(){}
 
     public LostItem(String title, String description, String imageUrl, String location) {
         this.title = title;

@@ -15,6 +15,7 @@ import com.example.demo.model.FoundItem;
 import com.example.demo.model.LostItem;
 import com.example.demo.repository.FoundItemRepository;
 import com.example.demo.repository.LostItemRepository;
+import com.example.demo.web.dto.CreateLostItemRequest;
 
 @RestController
 @RequestMapping("/api")
@@ -40,8 +41,23 @@ public class ItemController {
     }
 
     @PostMapping("/lost")
-    public LostItem reportLost(@RequestBody LostItem item) {
-        return lostRepo.save(item);
+    public LostItem reportLost(@RequestBody CreateLostItemRequest req) {
+        LostItem entity = new LostItem();
+        entity.setDescription(req.description());
+        entity.setImageUrl(req.imageUrl());
+        entity.setLocation(req.location());
+        entity.setTitle(req.title());
+        return lostRepo.save(entity);
+    }
+
+    @PostMapping("/found")
+    public FoundItem reportFound(@RequestBody CreateLostItemRequest req) {
+        FoundItem entity = new FoundItem();
+        entity.setDescription(req.description());
+        entity.setImageUrl(req.imageUrl());
+        entity.setLocation(req.location());
+        entity.setTitle(req.title());
+        return foundRepo.save(entity);
     }
 
     private <T> List<T> toList(Iterable<T> iterable) {
