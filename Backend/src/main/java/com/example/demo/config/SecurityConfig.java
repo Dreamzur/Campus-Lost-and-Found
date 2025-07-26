@@ -31,10 +31,7 @@ public class SecurityConfig {
         this.userService      = userService;
     }
 
-    /**
-     * Static bean method breaks the proxy-based cycle:
-     * PasswordEncoder is created without needing the SecurityConfig instance.
-     */
+ 
     @Bean
     public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -42,7 +39,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // instantiate filter here (not as a Spring bean)
+        
         JwtAuthenticationFilter jwtFilter =
             new JwtAuthenticationFilter(jwtTokenProvider, userService);
 

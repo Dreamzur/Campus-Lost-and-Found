@@ -16,5 +16,5 @@ public class CreateFoundItemRequest {
         this.title = title;
     }
 
-    // Getters and setters can be added here if needed
+  
 }
