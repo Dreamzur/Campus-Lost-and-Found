@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.User;
 import com.example.demo.security.JwtTokenProvider;
+import com.example.demo.security.UserPrincipal;
 import com.example.demo.service.UserService;
 import com.example.demo.web.dto.LoginRequest;
 import com.example.demo.web.dto.LoginResponse;
@@ -46,20 +48,23 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest body) {
         try {
-            authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(body.getUsername(), body.getPassword())
-            );
-        } catch (BadCredentialsException ex) {
-            return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body("Invalid username or password");
-        }
-
-        UserDetails user = userDetailsService.loadUserByUsername(body.getUsername());
-        String token = jwtTokenProvider.generateToken(user);
-
-        return ResponseEntity.ok(new LoginResponse(token));
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(body.getUsername(), body.getPassword())
+        );
+    } catch (BadCredentialsException ex) {
+        return ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
+            .body(new LoginResponse("",""));
     }
+
+
+    UserPrincipal principal = (UserPrincipal)
+        userDetailsService.loadUserByUsername(body.getUsername());
+    String token = jwtTokenProvider.generateToken(principal);
+    String role  = principal.getRole();
+
+    return ResponseEntity.ok(new LoginResponse(token, role));
+}
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterDto dto) {
@@ -69,7 +74,7 @@ public class AuthController {
                     .body("Username is already taken");
         }
 
-        // create & save new user
+
         User created = userService.register(dto.getUsername(), dto.getPassword());
     return ResponseEntity
             .ok(new RegisterResponse(created.getUsername()));

@@ -9,9 +9,16 @@ import androidx.lifecycle.viewModelScope
 import com.example.fiulostandfound.data.LoginRequest
 import com.example.fiulostandfound.data.RetrofitClient
 import com.example.fiulostandfound.data.UserPrefs
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+
+
+
 class LoginViewModel(private val ctx: Application) : AndroidViewModel(ctx) {
+    private val _role = MutableStateFlow<String?>(null)
+    val role: StateFlow<String?> = _role
     var username by mutableStateOf("")
     var password by mutableStateOf("")
     var isLoading by mutableStateOf(false)
@@ -20,16 +27,18 @@ class LoginViewModel(private val ctx: Application) : AndroidViewModel(ctx) {
     fun login(onSuccess: () -> Unit) {
         viewModelScope.launch {
             isLoading = true
-            errorMsg = null
+            errorMsg  = null
             try {
                 val resp = RetrofitClient.api.login(
                     LoginRequest(username, password)
                 )
                 if (resp.isSuccessful) {
-                    resp.body()?.token?.let { token ->
-                        UserPrefs.saveToken(ctx, token)
+                    val body = resp.body()
+                    if (body != null) {
+                        UserPrefs.saveToken(ctx, body.token)
+                        _role.value = body.role
                         onSuccess()
-                    } ?: run {
+                    } else {
                         errorMsg = "Empty response"
                     }
                 } else {

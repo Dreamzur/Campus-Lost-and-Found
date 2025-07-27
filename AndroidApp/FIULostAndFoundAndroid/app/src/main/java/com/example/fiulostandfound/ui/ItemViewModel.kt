@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fiulostandfound.data.Item
 import com.example.fiulostandfound.data.RetrofitClient
+import com.example.fiulostandfound.data.RetrofitClient.api
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -24,8 +25,6 @@ class ItemViewModel : ViewModel() {
     init {
         loadAll()
     }
-
-    /** Fetch *both* lost and found lists in one shot */
     fun loadAll() = viewModelScope.launch {
         // LOST
         try {
@@ -127,6 +126,19 @@ class ItemViewModel : ViewModel() {
             _errorMessage.value = "Network error (postFound): ${e.localizedMessage}"
         } catch (e: HttpException) {
             _errorMessage.value = "HTTP error (postFound): ${e.code()} ${e.message}"
+        }
+    }
+    fun claimLost(id: Long) = viewModelScope.launch {
+        api.claimLost(id).let { resp ->
+            if (resp.isSuccessful) loadAll()
+            else _errorMessage.value = "Claim failed: ${resp.code()}"
+        }
+    }
+
+    fun claimFound(id: Long) = viewModelScope.launch {
+        api.claimFound(id).let { resp ->
+            if (resp.isSuccessful) loadAll()
+            else _errorMessage.value = "Claim failed: ${resp.code()}"
         }
     }
 }

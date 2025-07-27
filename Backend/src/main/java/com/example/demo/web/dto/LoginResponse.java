@@ -2,8 +2,13 @@ package com.example.demo.web.dto;
 
 public class LoginResponse {
     private String token;
+    private String role;
+
     public LoginResponse() {}
-    public LoginResponse(String token) { this.token = token; }
+    public LoginResponse(String token, String role) {
+        this.token = token;
+        this.role  = role;
+    }
     public String getToken() { return token; }
-    public void setToken(String t) { this.token = t; }
+    public String getRole()  { return role; }
 }

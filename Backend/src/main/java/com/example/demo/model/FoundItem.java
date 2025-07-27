@@ -16,7 +16,7 @@ public class FoundItem {
 
 
     @Column(name = "image_url", nullable = false)
-    private String imageUrl;
+    private String image_url;
 
     @Column(nullable = false)
     private String description;
@@ -27,6 +27,10 @@ public class FoundItem {
 
     @Column(name = "title")
     private String title;
+
+    @Column(name = "claimed", nullable = false)
+    private boolean claimed = false;
+
 
 
     public FoundItem(){}
@@ -72,4 +76,15 @@ public class FoundItem {
     public void setTitle(String title) {
         this.title = title;
     }
+
+
+    public boolean isClaimed(){
+        return claimed;
+    }
+
+    public void setClaimed(boolean claimed){
+        this.claimed = claimed;
+    }
+
+
 }

@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import com.example.fiulostandfound.ui.theme.FIULostAndFoundTheme
 import com.example.fiulostandfound.ui.AddItemScreen
 
+
 class AddItemActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

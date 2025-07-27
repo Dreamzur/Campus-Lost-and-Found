@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -80,6 +81,7 @@ dependencies {
     implementation(libs.androidx.material.icons.core)
     implementation(libs.material.icons.extended)
     implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.kotlinx.coroutines.android.v171)
     implementation(libs.androidx.datastore.preferences)
@@ -94,6 +96,7 @@ dependencies {
     implementation(libs.play.services.games.v2)
     implementation(libs.gson)
     testImplementation(libs.junit)
+    implementation(libs.coil.compose)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

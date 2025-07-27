@@ -16,7 +16,7 @@ public class LostItem {
 
 
     @Column(name = "image_url", nullable = false)
-    private String imageUrl;
+  private String imageUrl;
 
     @Column(nullable = false)
     private String description;
@@ -27,6 +27,9 @@ public class LostItem {
 
     @Column(name = "title")
     private String title;
+
+    @Column(name = "claimed", nullable = false)
+    private boolean claimed = false;
 
 
     public LostItem(){}
@@ -76,5 +79,13 @@ public class LostItem {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public boolean isClaimed(){
+        return claimed;
+    }
+
+    public void setClaimed(boolean claimed){
+        this.claimed = claimed;
     }
 }

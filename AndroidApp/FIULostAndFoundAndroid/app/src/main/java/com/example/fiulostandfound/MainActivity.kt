@@ -1,5 +1,6 @@
 package com.example.fiulostandfound
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,8 +12,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
 import com.example.fiulostandfound.ui.*
 import com.example.fiulostandfound.ui.theme.FIULostAndFoundTheme
+
+
 
 class MainActivity : ComponentActivity() {
     private val itemViewModel     by viewModels<ItemViewModel>()
@@ -26,6 +30,9 @@ class MainActivity : ComponentActivity() {
             FIULostAndFoundTheme {
                 var loggedIn    by rememberSaveable { mutableStateOf(false) }
                 var registering by rememberSaveable { mutableStateOf(false) }
+                val role   by loginViewModel.role.collectAsState(initial = null)
+                val isAdmin = role == "admin"
+                val context = LocalContext.current
 
                 LaunchedEffect(loggedIn) {
                     if (loggedIn) itemViewModel.loadAll()
@@ -48,13 +55,28 @@ class MainActivity : ComponentActivity() {
                     }
 
                     else -> {
-                        // Main home UI once authenticated
                         HomeScreen(
-                            lostItems          = itemViewModel.lostItems.collectAsState().value,
-                            foundItems         = itemViewModel.foundItems.collectAsState().value,
-                            onLostClick        = { startActivity(Intent(this, LostItemsActivity::class.java)) },
-                            onFoundClick       = { startActivity(Intent(this, FoundItemsActivity::class.java)) },
-                            onReportLostClick  = {
+                            lostItems = itemViewModel.lostItems.collectAsState().value,
+                            foundItems = itemViewModel.foundItems.collectAsState().value,
+
+
+                            onLostClick = {
+                                startActivity(
+                                    Intent(
+                                        this,
+                                        LostItemsActivity::class.java
+                                    )
+                                )
+                            },
+                            onFoundClick = {
+                                startActivity(
+                                    Intent(
+                                        this,
+                                        FoundItemsActivity::class.java
+                                    )
+                                )
+                            },
+                            onReportLostClick = {
                                 startActivity(
                                     Intent(this, AddItemActivity::class.java)
                                         .putExtra("mode", "lost")
@@ -65,7 +87,18 @@ class MainActivity : ComponentActivity() {
                                     Intent(this, AddItemActivity::class.java)
                                         .putExtra("mode", "found")
                                 )
-                            }
+                            },
+
+                            onItemClick = { item ->
+                                // build an Intent with the parcelable item
+                                val intent = Intent(this, ItemDetailActivity::class.java).apply {
+                                    putExtra("item", item)
+                                    putExtra("mode", "lost")
+                                }
+                                startActivity(intent)
+                            },
+
+                            reportFoundVisible = isAdmin,
                         )
                     }
                 }

@@ -13,11 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FIULostAndFound">
         <activity
-            android:name=".SubmitItemActivity"
-            android:exported="false"
-            android:label="@string/title_activity_submit_item"
-            android:theme="@style/Theme.FIULostAndFound" />
-        <activity
             android:name=".FoundItemsActivity"
             android:exported="false"
             android:label="@string/title_activity_found_items"
@@ -39,6 +34,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".AddItemActivity" />
+        <activity
+            android:name=".ItemDetailActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

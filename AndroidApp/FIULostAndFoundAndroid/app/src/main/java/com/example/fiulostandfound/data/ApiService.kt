@@ -6,6 +6,8 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import com.example.fiulostandfound.data.Item
 import retrofit2.Response
+import retrofit2.http.PUT
+import retrofit2.http.Path
 
 interface ApiService {
 
@@ -22,4 +24,11 @@ interface ApiService {
     suspend fun postLost(@Body item: Item): Response<Item>
     @POST("/api/found")
     suspend fun postFound(@Body item: Item): Response<Item>
+
+    @PUT("api/lost/{id}/claim")
+    suspend fun claimLost(@Path("id") id: Long): Response<Unit>
+
+    @PUT("api/found/{id}/claim")
+    suspend fun claimFound(@Path("id") id: Long): Response<Unit>
+
 }

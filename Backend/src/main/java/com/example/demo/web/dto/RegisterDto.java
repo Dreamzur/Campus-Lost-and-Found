@@ -13,6 +13,8 @@ public class RegisterDto {
     @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
 
+
+
     public RegisterDto() {}
 
     public RegisterDto(String username, String password) {

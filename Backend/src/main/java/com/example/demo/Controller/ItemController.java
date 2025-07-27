@@ -4,12 +4,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.demo.model.FoundItem;
 import com.example.demo.model.LostItem;
@@ -59,6 +64,26 @@ public class ItemController {
         entity.setTitle(req.title());
         return foundRepo.save(entity);
     }
+
+@PutMapping("/lost/{id}/claim")
+public ResponseEntity<Void> claimLostItem(@PathVariable Integer id) {
+    LostItem item = lostRepo.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    item.setClaimed(true);
+    lostRepo.save(item);
+    return ResponseEntity.noContent().build();
+}
+
+@PutMapping("/found/{id}/claim")
+public ResponseEntity<Void> claimFoundItem(@PathVariable Integer id) {
+    FoundItem item = foundRepo.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    item.setClaimed(true);
+    foundRepo.save(item);
+    return ResponseEntity.noContent().build();
+}
+
+
 
     private <T> List<T> toList(Iterable<T> iterable) {
         return StreamSupport.stream(iterable.spliterator(), false)
