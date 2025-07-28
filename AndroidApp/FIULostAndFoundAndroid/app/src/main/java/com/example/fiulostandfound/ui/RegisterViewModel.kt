@@ -3,6 +3,7 @@ package com.example.fiulostandfound.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fiulostandfound.FiuLostAndFound
 import com.example.fiulostandfound.data.RegisterRequest
 import com.example.fiulostandfound.data.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +21,7 @@ class RegisterViewModel : ViewModel() {
 
     private val _errorMsg = MutableStateFlow<String?>(null)
     val errorMsg = _errorMsg.asStateFlow()
-
+    val api = FiuLostAndFound.api
     fun register( username: String,
                   password: String,
                   confirmPassword: String,
@@ -35,7 +36,7 @@ class RegisterViewModel : ViewModel() {
             _isLoading.value = true
             try {
                 // your retrofit call, for example:
-                RetrofitClient.api.register(RegisterRequest(username, password))
+                api.register(RegisterRequest(username, password))
                 onResult(true)
             } catch (e: Exception) {
                 _errorMsg.value = e.message ?: "Registration failed"

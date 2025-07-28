@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fiulostandfound.FiuLostAndFound
 import com.example.fiulostandfound.data.LoginRequest
 import com.example.fiulostandfound.data.RetrofitClient
 import com.example.fiulostandfound.data.UserPrefs
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel(private val ctx: Application) : AndroidViewModel(ctx) {
     private val _role = MutableStateFlow<String?>(null)
+    val api = FiuLostAndFound.api
     val role: StateFlow<String?> = _role
     var username by mutableStateOf("")
     var password by mutableStateOf("")
@@ -29,7 +31,7 @@ class LoginViewModel(private val ctx: Application) : AndroidViewModel(ctx) {
             isLoading = true
             errorMsg  = null
             try {
-                val resp = RetrofitClient.api.login(
+                val resp = api.login(
                     LoginRequest(username, password)
                 )
                 if (resp.isSuccessful) {

@@ -20,9 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fiulostandfound.FiuLostAndFound
 import com.example.fiulostandfound.data.Item
 import com.example.fiulostandfound.data.RetrofitClient
 import kotlinx.coroutines.launch
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,6 +34,7 @@ fun AddItemScreen(
     onDone: () -> Unit,
     viewModel: com.example.fiulostandfound.ui.ItemViewModel = viewModel()
 ) {
+    val api = FiuLostAndFound.api
     val scope = rememberCoroutineScope()
     var isSubmitting by remember { mutableStateOf(false) }
     var error       by remember { mutableStateOf<String?>(null) }
@@ -56,9 +60,9 @@ fun AddItemScreen(
                     scope.launch {
                         try {
                             val resp = if (mode == "lost")
-                                RetrofitClient.api.postLost(newItem)
+                                api.postLost(newItem)
                             else
-                                RetrofitClient.api.postFound(newItem)
+                                api.postFound(newItem)
 
                             if (resp.isSuccessful) {
                                 onDone()
@@ -93,4 +97,6 @@ fun AddItemScreen(
         }
     }
 }
+
+
 

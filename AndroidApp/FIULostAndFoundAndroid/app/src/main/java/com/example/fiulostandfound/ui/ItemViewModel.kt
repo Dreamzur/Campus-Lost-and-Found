@@ -3,9 +3,9 @@ package com.example.fiulostandfound.ui
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fiulostandfound.FiuLostAndFound
 import com.example.fiulostandfound.data.Item
 import com.example.fiulostandfound.data.RetrofitClient
-import com.example.fiulostandfound.data.RetrofitClient.api
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -13,6 +13,7 @@ import retrofit2.HttpException
 import java.io.IOException
 
 class ItemViewModel : ViewModel() {
+    val api = FiuLostAndFound.api
     private val _lostItems  = MutableStateFlow<List<Item>>(emptyList())
     val  lostItems: StateFlow<List<Item>> = _lostItems
 
@@ -28,7 +29,7 @@ class ItemViewModel : ViewModel() {
     fun loadAll() = viewModelScope.launch {
         // LOST
         try {
-            val lostResp = RetrofitClient.api.getLost()
+            val lostResp = api.getLost()
             if (lostResp.isSuccessful) {
                 _lostItems.value = lostResp.body().orEmpty()
                 _errorMessage.value = null
@@ -46,7 +47,7 @@ class ItemViewModel : ViewModel() {
 
         // FOUND
         try {
-            val foundResp = RetrofitClient.api.getFound()
+            val foundResp = api.getFound()
             if (foundResp.isSuccessful) {
                 _foundItems.value = foundResp.body().orEmpty()
                 _errorMessage.value = null
@@ -65,10 +66,10 @@ class ItemViewModel : ViewModel() {
 
     fun addLost(item: Item) = viewModelScope.launch {
         try {
-            val postResp = RetrofitClient.api.postLost(item)
+            val postResp = api.postLost(item)
             if (postResp.isSuccessful) {
                 // reload only lost
-                val resp = RetrofitClient.api.getLost()
+                val resp = api.getLost()
                 if (resp.isSuccessful) _lostItems.value = resp.body().orEmpty()
                 else                   _errorMessage.value = "Refresh lost failed: ${resp.code()}"
             } else {
@@ -83,7 +84,7 @@ class ItemViewModel : ViewModel() {
 
     suspend fun postLostBlocking(item: Item): Boolean {
         return try {
-            val resp = RetrofitClient.api.postLost(item)
+            val resp = api.postLost(item)
             if (!resp.isSuccessful) {
                 Log.e("ItemVM", "postLost failed: ${resp.code()} / ${resp.errorBody()?.string()}")
             }
@@ -97,7 +98,7 @@ class ItemViewModel : ViewModel() {
 
     suspend fun postFoundBlocking(item: Item): Boolean {
         return try {
-            val resp = RetrofitClient.api.postFound(item)
+            val resp = api.postFound(item)
             if (!resp.isSuccessful) {
                 Log.e("ItemVM", "postFound failed: ${resp.code()} / ${resp.errorBody()?.string()}")
             }
@@ -113,10 +114,10 @@ class ItemViewModel : ViewModel() {
 
     fun addFound(item: Item) = viewModelScope.launch {
         try {
-            val postResp = RetrofitClient.api.postFound(item)
+            val postResp = api.postFound(item)
             if (postResp.isSuccessful) {
                 // reload only found
-                val resp = RetrofitClient.api.getFound()
+                val resp = api.getFound()
                 if (resp.isSuccessful) _foundItems.value = resp.body().orEmpty()
                 else                   _errorMessage.value = "Refresh found failed: ${resp.code()}"
             } else {
@@ -135,6 +136,15 @@ class ItemViewModel : ViewModel() {
         }
     }
 
+    fun removeLost(id: Long) = viewModelScope.launch {
+        api.deleteLost(id)
+        loadAll()
+    }
+
+    fun removeFound(id: Long) = viewModelScope.launch {
+        api.deleteFound(id)
+        loadAll()
+    }
     fun claimFound(id: Long) = viewModelScope.launch {
         api.claimFound(id).let { resp ->
             if (resp.isSuccessful) loadAll()

@@ -16,7 +16,7 @@ public class FoundItem {
 
 
     @Column(name = "image_url", nullable = false)
-    private String image_url;
+    private String imageUrl;
 
     @Column(nullable = false)
     private String description;

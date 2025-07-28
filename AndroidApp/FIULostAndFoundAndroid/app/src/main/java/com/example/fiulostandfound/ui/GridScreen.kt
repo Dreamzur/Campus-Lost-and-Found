@@ -22,9 +22,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.fiulostandfound.data.Item
 
-/**
- * A two-column grid screen that shows all the items in `itemsList`.
- */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GridScreen(

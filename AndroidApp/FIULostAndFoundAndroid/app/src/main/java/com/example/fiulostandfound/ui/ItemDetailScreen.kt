@@ -7,17 +7,17 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.fiulostandfound.data.Item
-import com.example.fiulostandfound.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ItemDetailScreen(
     item: Item,
-    onClaim: () -> Unit
+    isAdmin: Boolean,
+    onClaim: () -> Unit,
+    onRemove: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -48,19 +48,24 @@ fun ItemDetailScreen(
             Text("Location", style = MaterialTheme.typography.titleMedium)
             item.location?.let { Text(it, modifier = Modifier.padding(top = 4.dp)) }
             Spacer(Modifier.height(24.dp))
-            Button(
-                onClick = onClaim,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Claim Item")
+            if (isAdmin) {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Button(onClick = onRemove, modifier = Modifier.weight(1f)) {
+                        Text("Remove")
+                    }
+                    Button(onClick = onClaim, modifier = Modifier.weight(1f)) {
+                        Text(if (item.claimed) "Already claimed" else "Claim")
+                    }
+                }
+            } else {
+                if (!item.claimed) {
+                    Button(onClick = onClaim, modifier = Modifier.fillMaxWidth()) {
+                        Text("Claim Item")
+                    }
+                } else {
+                    Text("Already claimed", color = MaterialTheme.colorScheme.error)
+                }
             }
         }
-
-
     }
 }
-
-
-
-
-

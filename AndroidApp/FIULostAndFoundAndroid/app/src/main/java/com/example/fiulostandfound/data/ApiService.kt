@@ -6,6 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import com.example.fiulostandfound.data.Item
 import retrofit2.Response
+import retrofit2.http.DELETE
 import retrofit2.http.PUT
 import retrofit2.http.Path
 
@@ -30,5 +31,11 @@ interface ApiService {
 
     @PUT("api/found/{id}/claim")
     suspend fun claimFound(@Path("id") id: Long): Response<Unit>
+
+    @DELETE("api/lost/{id}")
+    suspend fun deleteLost(@Path("id") id: Long): Response<Unit>
+
+    @DELETE("api/found/{id}")
+    suspend fun deleteFound(@Path("id") id: Long): Response<Unit>
 
 }
