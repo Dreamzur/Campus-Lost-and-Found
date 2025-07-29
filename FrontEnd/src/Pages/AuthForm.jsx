@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import "./AuthForm.css";
+import "./sharedPages.css";
 
 export default function AuthForm() {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -59,14 +59,14 @@ export default function AuthForm() {
           throw new Error("Registered, but auto-login failed.");
         }
 
-        loginWithToken(loginData.token);
+        loginWithToken(loginData.token, loginData.role);
         navigate("/");
         return;
       }
 
       // Login
       if (data.token) {
-        loginWithToken(data.token);
+        loginWithToken(data.token, data.role);
         navigate("/");
       }
 

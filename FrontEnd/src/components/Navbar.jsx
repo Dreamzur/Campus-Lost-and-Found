@@ -19,7 +19,7 @@ export default function Navbar() {
           <Link to="/">Campus Lost and Found</Link>
         </h1>
         <div className="navbar-links">
-          {isLoggedIn && userRole === "ROLE_ADMIN" && (
+          {isLoggedIn && userRole?.toLowerCase() === "admin" && (
             <Link to="/admin-dashboard">Dashboard</Link>
           )}
 

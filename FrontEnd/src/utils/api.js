@@ -10,14 +10,17 @@ export const fetchItems = async () => {
   }
 };
 
-export const itemSubmitHandler = async (formData) => {
+export const itemSubmitHandler = async (data) => {
   try {
     const token = localStorage.getItem("token");
 
     const res = await fetch("http://localhost:8080/api/lost", {
       method: 'POST',
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-      body: formData,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: JSON.stringify(data),
     });
 
     if (!res.ok) {
@@ -31,4 +34,5 @@ export const itemSubmitHandler = async (formData) => {
     console.error("Error submitting item:", err);
   }
 };
+
 

@@ -7,30 +7,19 @@ export function AuthProvider({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState(null);
 
-  const loginWithToken = (token) => {
+  const loginWithToken = (token, role) => {
     localStorage.setItem("token", token);
-    try {
-      const decoded = jwtDecode(token);
-      setIsLoggedIn(true);
-      setUserRole(decoded.roles?.[0]);
-    } catch (err) {
-      console.error("Invalid token on login");
-      localStorage.removeItem("token");
-    }
+    localStorage.setItem("role", role);
+    setIsLoggedIn(true);
+    setUserRole(role);
   };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        console.log("Decoded JWT:", decoded);
-        setIsLoggedIn(true);
-        setUserRole(decoded.roles?.[0]);
-      } catch (err) {
-        console.error("Invalid token");
-        localStorage.removeItem("token");
-      }
+    const role = localStorage.getItem("role");
+    if (token && role) {
+      setIsLoggedIn(true);
+      setUserRole(role);
     }
   }, []);
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ItemsList from "../components/ItemsList";
 import { fetchItems } from '../utils/api';
-import './Items.css';
+import './sharedPages.css';
 
 export default function ShowItem() {
   const [items, setItems] = useState([]);

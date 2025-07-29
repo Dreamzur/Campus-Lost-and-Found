@@ -1,18 +1,16 @@
 export default function ItemCard({ item }) {
   return (
     <div className="item-card">
-      {item.image && (
+      {item.imageUrl && (
         <img
-          src={`http://localhost:8080/api/image/${item.id}`}
+          src={item.imageUrl}
           alt={item.title}
           className="item-card-img"
         />
       )}
-
-      <div
-        className={`item-status-badge ${item.approved ? 'approved' : 'pending'}`}
-      >
-        {item.approved ? 'Approved' : 'Pending'}
+      
+      <div className={`item-status-badge ${item.claimed ? 'claimed' : ''}`}>
+        {item.claimed ? 'Claimed' : ''}
       </div>
 
       <h3 className="item-card-title">{item.title}</h3>

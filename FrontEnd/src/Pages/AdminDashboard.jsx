@@ -1,51 +1,56 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import './AdminDashboard.css';
+import { useAuth } from "../context/AuthContext";
+import './sharedPages.css';
 
 export default function AdminDashboard() {
   const [items, setItems] = useState([]);
+  const { userRole } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    if (!token) {
-      console.error("No token found. Redirect to login?");
+    if (!token || !userRole?.includes("ADMIN")) {
+      console.error("Access denied: Only admins allowed");
+      navigate("/");
       return;
     }
 
     axios.get("http://localhost:8080/api/admin/lost-items", {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     })
-      .then(res => {
+      .then((res) => {
         console.log("Fetched items:", res.data);
         setItems(res.data);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Failed to fetch items:", err);
         if (err.response && err.response.status === 401) {
           console.error("Unauthorized: Token is invalid or expired");
         }
       });
-  }, []);
+  }, [userRole, navigate]);
 
-  const approveItem = (id) => {
+  const claimItem = (id) => {
     const token = localStorage.getItem("token");
 
-    axios.put(`http://localhost:8080/api/admin/approve/${id}`, {}, {
+    axios.put(`http://localhost:8080/api/admin/claim/${id}`, {}, {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     })
       .then(() => {
         setItems(prevItems =>
           prevItems.map(item =>
-            item.id === id ? { ...item, approved: true } : item
+            item.id === id ? { ...item, claimed: true } : item
           )
         );
       })
-      .catch(err => console.error("Failed to approve item:", err));
+      .catch(err => console.error("Failed to mark item as claimed:", err));
   };
 
   const deleteItem = (id) => {
@@ -53,14 +58,18 @@ export default function AdminDashboard() {
 
     axios.delete(`http://localhost:8080/api/admin/delete/${id}`, {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     })
       .then(() => {
         setItems(prevItems => prevItems.filter(item => item.id !== id));
       })
       .catch(err => console.error("Failed to delete item:", err));
   };
+
+  if (!userRole?.includes("ADMIN")) {
+    return <p className="unauthorized-msg">Access denied: Admins only.</p>;
+  }
 
   return (
     <div className="dashboard-container">
@@ -75,22 +84,22 @@ export default function AdminDashboard() {
               <p>{item.description}</p>
               <p><strong>Location:</strong> {item.location}</p>
 
-              {item.image && (
+              {item.imageUrl && (
                 <img
-                  src={`http://localhost:8080/api/image/${item.id}`}
+                  src={item.imageUrl}
                   alt={item.title}
-                  className="admin-item-image"
+                  className="item-card-img"
                 />
               )}
 
-              <p className={`status ${!item.approved ? 'pending' : ''}`}>
-                <strong>Status:</strong> {item.approved ? "Approved" : "Pending"}
+              <p className={`status ${!item.claimed ? 'pending' : ''}`}>
+                <strong>Status:</strong> {item.claimed ? "Claimed" : "Pending"}
               </p>
 
               <div className="item-buttons">
-                {!item.approved && (
-                  <button className="approve-btn" onClick={() => approveItem(item.id)}>
-                    Approve
+                {!item.claimed && (
+                  <button className="approve-btn" onClick={() => claimItem(item.id)}>
+                    Mark as Claimed
                   </button>
                 )}
                 <button className="delete-btn" onClick={() => deleteItem(item.id)}>

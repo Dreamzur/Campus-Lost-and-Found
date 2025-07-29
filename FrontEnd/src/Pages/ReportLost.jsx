@@ -1,52 +1,71 @@
-import './ReportLost.css';
+import './sharedPages.css';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { itemSubmitHandler } from '../utils/api';
+import { useAuth } from '../context/AuthContext';
 
 export default function ReportLost() {
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate('/auth');
+    }
+  }, [isLoggedIn, navigate]);
 
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     location: '',
-    image: null,
+    imageUrl: '',
   });
 
   const [uploading, setUploading] = useState(false);
+  const [imageError, setImageError] = useState("");
+
+  const isValidImageUrl = (url) => {
+    return /^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/i.test(url);
+  };
 
   const changeHandler = (e) => {
-    const { name, value, files } = e.target;
+    const { name, value } = e.target;
 
-    if (name === 'image') {
-      setFormData(f => ({
-        ...f,
-        image: files[0]
-      }));
-    } else {
-      setFormData(f => ({
-        ...f,
-        [name]: value
-      }));
+    if (name === "imageUrl") {
+      if (value === "") {
+        setImageError("");
+      } else if (!isValidImageUrl(value)) {
+        setImageError("Please enter a valid image URL ending in .jpg, .png, etc.");
+      } else {
+        setImageError("");
+      }
     }
+
+    setFormData(f => ({
+      ...f,
+      [name]: value
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (formData.imageUrl && !isValidImageUrl(formData.imageUrl)) {
+      setImageError("Image URL is invalid. Please fix it before submitting.");
+      return;
+    }
+
     try {
       setUploading(true);
 
-      const submitPayload = new FormData();
-      submitPayload.append("title", formData.title);
-      submitPayload.append("description", formData.description);
-      submitPayload.append("location", formData.location);
+      const payload = {
+        title: formData.title,
+        description: formData.description,
+        location: formData.location,
+        image_url: formData.imageUrl,
+      };
 
-      if (formData.image) {
-        submitPayload.append("image", formData.image);
-      }
-
-      await itemSubmitHandler(submitPayload);
+      await itemSubmitHandler(payload);
 
       setUploading(false);
       alert('Item submitted successfully!');
@@ -61,89 +80,32 @@ export default function ReportLost() {
     <div className="report-form">
       <h2>Report Lost Item</h2>
       <form onSubmit={handleSubmit}>
-        {/* --- Item Details --- */}
         <div className="form-grid">
-          <div>
+          <div className="full-span">
             <label>What was Lost *</label>
             <input 
-            type="text"
-            name="title" 
-            placeholder="Headphones, Water Bottle, etc."
-            value={formData.title}
-            onChange={changeHandler}
-            required 
+              type="text"
+              name="title" 
+              placeholder="Headphones, Water Bottle, etc."
+              value={formData.title}
+              onChange={changeHandler}
+              required 
             />
           </div>
 
-          <div>
-            <label>Date Lost *</label>
-            <input
-            type="date" 
-            // required 
-            />
-          </div>
-
-          <div>
-            <label>Type *</label>
-            <select name="type">
-              <option value="">Select type...</option>
-              <option value="Bag">Bag</option>
-              <option value="Binder/Notebook">Binder/Notebook</option>
-              <option value="Book">Book</option>
-              <option value="Cable">Cable</option>
-              <option value="Camera">Camera</option>
-              <option value="Cash/Check">Cash/Check</option>
-              <option value="Clothing">Clothing</option>
-              <option value="Credit Card">Credit Card</option>
-              <option value="Driver's License/Government or State-issued ID">Driver's License/Government or State-issued ID</option>
-              <option value="Student ID">Student ID</option>
-              <option value="Glasses">Glasses</option>
-              <option value="Jewelry">Jewelry</option>
-              <option value="Keys">Keys</option>
-              <option value="Laptop">Laptop</option>
-              <option value="Mobile Phone">Mobile Phone</option>
-              <option value="Other">Other</option>
-              <option value="Other Electronic Items">Other Electronic Items</option>
-              <option value="Passport">Passport</option>
-              <option value="Shoes">Shoes</option>
-              <option value="Skateboard">Skateboard</option>
-              <option value="USB">USB</option>
-              <option value="Umbrella">Umbrella</option>
-              <option value="Wallet">Wallet</option>
-            </select>
-          </div>
-
-          <div>
-            <label>Time Lost *</label>
-            <input 
-            type="time" 
-            // required
-            />
-          </div>
-
-          <div>
-            <label>Upload Image</label>
-            <input 
-            type="file"
-            name="image"
-            accept="image/*"
-            onChange={changeHandler}
-            />
-          </div>
-
-          <div className="add-info full-width">
+          <div className="full-span">
             <label>Additional Information</label>
             <textarea
-            name="description" 
-            placeholder="Any details, or information to help identify the item."
-            value={formData.description}
-            onChange={changeHandler}
-            maxLength={240}
+              name="description" 
+              placeholder="Any details or identifying info"
+              value={formData.description}
+              onChange={changeHandler}
+              maxLength={240}
             />
             <small>{formData.description.length}/240 characters</small>
           </div>
 
-          <div className="full-width">
+          <div className="full-span">
             <label>Where was it lost? *</label>
             <input
               type="text"
@@ -152,56 +114,46 @@ export default function ReportLost() {
               value={formData.location}
               onChange={changeHandler}
               required
-              />
-          </div>
-        </div>
-    
-        {/* --- User Details --- */}
-        <h2>Your Details</h2>
-        <div className="form-grid">
-          <div>
-            <label>First Name *</label>
-            <input 
-            type="text" 
-            name="firstName" 
-            // required 
             />
           </div>
 
-          <div>
-            <label>Last Name *</label>
+          <div className="full-span">
+            <label>Image URL</label>
             <input 
-            type="text" 
-            name="lastName" 
-            // required 
+              type="text"
+              name="imageUrl"
+              placeholder="Paste image link (e.g. https://...)"
+              value={formData.imageUrl}
+              onChange={changeHandler}
             />
-          </div>
-
-          <div>
-            <label>Email *</label>
-            <input 
-            type="email" 
-            name="email" 
-            // // required 
-            />
-          </div>
-
-          <div>
-            <label>Phone Number</label>
-            <input type="tel" name="phone" />
+            {imageError && <small className="image-error">{imageError}</small>}
+            {isValidImageUrl(formData.imageUrl) && (
+              <div className="image-preview">
+                <img src={formData.imageUrl} alt="Preview" />
+              </div>
+            )}
           </div>
         </div>
 
-        <button 
-        type="button" 
-        className="back-button" 
-        onClick={() => navigate('/')}>← Back to Home
-        </button>
+        <div className="button-wrapper">
+          <div className="back-button-container">
+            <button 
+              type="button" 
+              className="back-button" 
+              onClick={() => navigate('/')}>
+              ← Back to Home
+            </button>
+          </div>
 
-        <button 
-        type="submit" 
-        className="submit-button" disabled={uploading}>{uploading ? 'Submitting...' : 'Submit Lost Item'}
-        </button>
+          <div className="submit-button-container">
+            <button 
+              type="submit" 
+              className="submit-button" 
+              disabled={uploading}>
+              {uploading ? 'Submitting...' : 'Submit Lost Item'}
+            </button>
+          </div>
+        </div>
       </form>
     </div>
   );
