@@ -1,36 +1,42 @@
 package com.example.demo.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "lost_items")
 public class LostItem {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
+    @Column(name = "image_url", nullable = false)
+    private String imageUrl;
 
+    @Column(nullable = false)
     private String description;
 
+    @Column(name = "location")
     private String location;
 
-    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean approved;
+    @Column(name = "title")
+    private String title;
 
-    @Lob
-    @Column(name = "image", columnDefinition = "LONGBLOB")
-    private byte[] image;
+    @Column(name = "claimed", nullable = false)
+    private boolean claimed = false;
 
     public LostItem() {
     }
 
-    public LostItem(String title, String description, String location, byte[] image) {
+    public LostItem(String title, String description, String imageUrl, String location) {
         this.title = title;
         this.description = description;
+        this.imageUrl = imageUrl;
         this.location = location;
-        this.image = image;
     }
 
     public Long getId() {
@@ -57,6 +63,14 @@ public class LostItem {
         this.description = description;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     public String getLocation() {
         return location;
     }
@@ -65,20 +79,11 @@ public class LostItem {
         this.location = location;
     }
 
-    public byte[] getImage() {
-        return image;
+    public boolean isClaimed() {
+        return claimed;
     }
 
-    public void setImage(byte[] image) {
-        this.image = image;
+    public void setClaimed(boolean claimed) {
+        this.claimed = claimed;
     }
-
-    public boolean isApproved() {
-        return approved;
-    }
-
-    public void setApproved(boolean approved) {
-        this.approved = approved;
-    }
-
 }

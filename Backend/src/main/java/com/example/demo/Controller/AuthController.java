@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,10 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.User;
 import com.example.demo.security.JwtTokenProvider;
+import com.example.demo.security.UserPrincipal;
 import com.example.demo.service.UserService;
 import com.example.demo.web.dto.LoginRequest;
 import com.example.demo.web.dto.LoginResponse;
 import com.example.demo.web.dto.RegisterDto;
+import com.example.demo.web.dto.RegisterResponse;
 
 @RestController
 @RequestMapping("/api")
@@ -51,13 +54,14 @@ public class AuthController {
     } catch (BadCredentialsException ex) {
       return ResponseEntity
           .status(HttpStatus.UNAUTHORIZED)
-          .body("Invalid username or password");
+          .body(new LoginResponse("", ""));
     }
 
-    UserDetails user = userDetailsService.loadUserByUsername(body.getUsername());
-    String token = jwtTokenProvider.generateToken(user);
+    UserPrincipal principal = (UserPrincipal) userDetailsService.loadUserByUsername(body.getUsername());
+    String token = jwtTokenProvider.generateToken(principal);
+    String role = principal.getRole();
 
-    return ResponseEntity.ok(new LoginResponse(token));
+    return ResponseEntity.ok(new LoginResponse(token, role));
   }
 
   @PostMapping("/register")
@@ -68,27 +72,8 @@ public class AuthController {
           .body("Username is already taken");
     }
 
-    // new usee
     User created = userService.register(dto.getUsername(), dto.getPassword());
-
-    System.out.println("Registered user: " + created.getUsername() + ", role: " + created.getRole());
-
-    // auth registered user
-    try {
-      authenticationManager.authenticate(
-          new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword()));
-    } catch (BadCredentialsException ex) {
-      return ResponseEntity
-          .status(HttpStatus.UNAUTHORIZED)
-          .body("Authentication failed after registration");
-    }
-
-    // load & gen token
-    UserDetails user = userDetailsService.loadUserByUsername(dto.getUsername());
-    String token = jwtTokenProvider.generateToken(user);
-
-    // return token
-    return ResponseEntity.ok(new LoginResponse(token));
+    return ResponseEntity
+        .ok(new RegisterResponse(created.getUsername()));
   }
-
 }

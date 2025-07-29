@@ -4,7 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.demo.model.FoundItem;
 
-public interface FoundItemRepository extends JpaRepository<FoundItem, Integer> {
+public interface FoundItemRepository extends JpaRepository<FoundItem, Long> {
 }
-// This interface extends CrudRepository to provide CRUD operations for
-// FoundItem entities.

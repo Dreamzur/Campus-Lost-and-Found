@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.security.UserPrincipal;
 
 import jakarta.transaction.Transactional;
 
@@ -34,21 +35,14 @@ public class UserService implements UserDetailsService {
     User u = new User();
     u.setUsername(username);
     u.setPasswordHash(encoded);
-    u.setRole("ROLE_USER");
     return userRepo.save(u);
   }
 
   @Override
-  public UserDetails loadUserByUsername(String username)
-      throws UsernameNotFoundException {
-
-    User u = userRepo.findByUsername(username)
-        .orElseThrow(() -> new UsernameNotFoundException("No user: " + username));
-
-    return new org.springframework.security.core.userdetails.User(
-        u.getUsername(),
-        u.getPasswordHash(),
-        Collections.singletonList(new SimpleGrantedAuthority(u.getRole())));
+  public UserDetails loadUserByUsername(String username) {
+    User u = userRepo.findByUsernameIgnoreCase(username)
+        .orElseThrow(() -> new UsernameNotFoundException(username));
+    return new UserPrincipal(u);
   }
 
   public boolean usernameExists(String username) {
