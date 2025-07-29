@@ -3,128 +3,152 @@ package com.example.fiulostandfound.ui
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fiulostandfound.FiuLostAndFound
 import com.example.fiulostandfound.data.Item
-import com.example.fiulostandfound.data.RetrofitClient   // ← imports ApiService.api
+import com.example.fiulostandfound.data.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-class ItemViewModel: ViewModel() {
+class ItemViewModel : ViewModel() {
+    val api = FiuLostAndFound.api
     private val _lostItems  = MutableStateFlow<List<Item>>(emptyList())
+    val  lostItems: StateFlow<List<Item>> = _lostItems
+
     private val _foundItems = MutableStateFlow<List<Item>>(emptyList())
-    val lostItems: StateFlow<List<Item>> = _lostItems
-    val foundItems: StateFlow<List<Item>> = _foundItems
+    val  foundItems: StateFlow<List<Item>> = _foundItems
 
     private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage
-
-    fun loadAll() {
-        viewModelScope.launch {
-            try {
-                // 1) Load lost items
-                val lostResp = RetrofitClient.api.getLost()
-                if (lostResp.isSuccessful) {
-                    _lostItems.value = lostResp.body().orEmpty()
-                } else {
-                    _errorMessage.value = "Error loading lost items: ${lostResp.code()} ${lostResp.message()}"
-                }
-
-                // 2) Load found items
-                val foundResp = RetrofitClient.api.getFound()
-                if (foundResp.isSuccessful) {
-                    _foundItems.value = foundResp.body().orEmpty()
-                } else {
-                    _errorMessage.value = "Error loading found items: ${foundResp.code()} ${foundResp.message()}"
-                }
-
-            } catch (ioe: IOException) {
-                _errorMessage.value = "Network error: ${ioe.localizedMessage}"
-            } catch (he: HttpException) {
-                _errorMessage.value = "HTTP error: ${he.code()} ${he.message()}"
-            } catch (t: Throwable) {
-                _errorMessage.value = "Unexpected error: ${t.localizedMessage}"
-            }
-        }
-    }
-
-
-
+    val  errorMessage: StateFlow<String?> = _errorMessage
 
     init {
-        loadLostItems()
+        loadAll()
     }
-
-    private fun loadLostItems() {
-        viewModelScope.launch {
-            try {
-                val resp = RetrofitClient.api.getLost()
-                if (resp.isSuccessful) {
-                    _lostItems.value = resp.body().orEmpty()
-                    _errorMessage.value = null
-                } else {
-                    // API returned 4xx or 5xx
-                    _errorMessage.value = "Server error ${resp.code()}: ${resp.message()}"
-                }
-            } catch (e: IOException) {
-                // network or conversion error
-                _errorMessage.value = "Network error: ${e.localizedMessage}"
-            } catch (e: HttpException) {
-                // non-2xx but thrown anyway
-                _errorMessage.value = "HTTP exception ${e.code()}: ${e.message}"
-            } catch (e: Throwable) {
-                _errorMessage.value = "Unexpected: ${e.localizedMessage}"
+    fun loadAll() = viewModelScope.launch {
+        // LOST
+        try {
+            val lostResp = api.getLost()
+            if (lostResp.isSuccessful) {
+                _lostItems.value = lostResp.body().orEmpty()
+                _errorMessage.value = null
+            } else {
+                _errorMessage.value = "Failed to load lost items: ${lostResp.code()} / ${lostResp.message()}"
+                Log.e("ItemVM", _errorMessage.value!!)
             }
+        } catch (e: IOException) {
+            _errorMessage.value = "Network error (lost): ${e.localizedMessage}"
+            Log.e("ItemVM", "loadAll() lost error", e)
+        } catch (e: HttpException) {
+            _errorMessage.value = "HTTP error (lost): ${e.code()} ${e.message}"
+            Log.e("ItemVM", "loadAll() lost error", e)
+        }
+
+        // FOUND
+        try {
+            val foundResp = api.getFound()
+            if (foundResp.isSuccessful) {
+                _foundItems.value = foundResp.body().orEmpty()
+                _errorMessage.value = null
+            } else {
+                _errorMessage.value = "Failed to load found items: ${foundResp.code()} / ${foundResp.message()}"
+                Log.e("ItemVM", _errorMessage.value!!)
+            }
+        } catch (e: IOException) {
+            _errorMessage.value = "Network error (found): ${e.localizedMessage}"
+            Log.e("ItemVM", "loadAll() found error", e)
+        } catch (e: HttpException) {
+            _errorMessage.value = "HTTP error (found): ${e.code()} ${e.message}"
+            Log.e("ItemVM", "loadAll() found error", e)
         }
     }
-
 
     fun addLost(item: Item) = viewModelScope.launch {
         try {
-            // 1) post the new item
-            val postResp = RetrofitClient.api.postLost(item)
+            val postResp = api.postLost(item)
             if (postResp.isSuccessful) {
-                // 2) if posting succeeded, reload the list
-                val getResp = RetrofitClient.api.getLost()
-                if (getResp.isSuccessful) {
-                    _lostItems.value = getResp.body().orEmpty()
-                    _errorMessage.value = null
-                } else {
-                    _errorMessage.value = "Failed to refresh lost items: ${getResp.code()} ${getResp.message()}"
-                }
+                // reload only lost
+                val resp = api.getLost()
+                if (resp.isSuccessful) _lostItems.value = resp.body().orEmpty()
+                else                   _errorMessage.value = "Refresh lost failed: ${resp.code()}"
             } else {
-                _errorMessage.value = "Failed to post lost item: ${postResp.code()} ${postResp.message()}"
+                _errorMessage.value = "Post lost failed: ${postResp.code()}"
             }
-        } catch (ioe: IOException) {
-            _errorMessage.value = "Network error: ${ioe.localizedMessage}"
-        } catch (he: HttpException) {
-            _errorMessage.value = "HTTP error: ${he.code()} ${he.message()}"
-        } catch (t: Throwable) {
-            _errorMessage.value = "Unexpected: ${t.localizedMessage}"
+        } catch (e: IOException) {
+            _errorMessage.value = "Network error (postLost): ${e.localizedMessage}"
+        } catch (e: HttpException) {
+            _errorMessage.value = "HTTP error (postLost): ${e.code()} ${e.message}"
         }
     }
 
+    suspend fun postLostBlocking(item: Item): Boolean {
+        return try {
+            val resp = api.postLost(item)
+            if (!resp.isSuccessful) {
+                Log.e("ItemVM", "postLost failed: ${resp.code()} / ${resp.errorBody()?.string()}")
+            }
+            resp.isSuccessful
+        } catch (e: Exception) {
+            Log.e("ItemVM", "postLost exception", e)
+            false
+        }
+    }
+
+
+    suspend fun postFoundBlocking(item: Item): Boolean {
+        return try {
+            val resp = api.postFound(item)
+            if (!resp.isSuccessful) {
+                Log.e("ItemVM", "postFound failed: ${resp.code()} / ${resp.errorBody()?.string()}")
+            }
+            resp.isSuccessful
+        } catch (e: Exception) {
+            Log.e("ItemVM", "postFound exception", e)
+            false
+        }
+    }
+
+
+
+
     fun addFound(item: Item) = viewModelScope.launch {
         try {
-            val postResp = RetrofitClient.api.postFound(item)
+            val postResp = api.postFound(item)
             if (postResp.isSuccessful) {
-                val getResp = RetrofitClient.api.getFound()
-                if (getResp.isSuccessful) {
-                    _foundItems.value = getResp.body().orEmpty()
-                    _errorMessage.value = null
-                } else {
-                    _errorMessage.value = "Failed to refresh found items: ${getResp.code()} ${getResp.message()}"
-                }
+                // reload only found
+                val resp = api.getFound()
+                if (resp.isSuccessful) _foundItems.value = resp.body().orEmpty()
+                else                   _errorMessage.value = "Refresh found failed: ${resp.code()}"
             } else {
-                _errorMessage.value = "Failed to post found item: ${postResp.code()} ${postResp.message()}"
+                _errorMessage.value = "Post found failed: ${postResp.code()}"
             }
-        } catch (ioe: IOException) {
-            _errorMessage.value = "Network error: ${ioe.localizedMessage}"
-        } catch (he: HttpException) {
-            _errorMessage.value = "HTTP error: ${he.code()} ${he.message()}"
-        } catch (t: Throwable) {
-            _errorMessage.value = "Unexpected: ${t.localizedMessage}"
+        } catch (e: IOException) {
+            _errorMessage.value = "Network error (postFound): ${e.localizedMessage}"
+        } catch (e: HttpException) {
+            _errorMessage.value = "HTTP error (postFound): ${e.code()} ${e.message}"
+        }
+    }
+    fun claimLost(id: Long) = viewModelScope.launch {
+        api.claimLost(id).let { resp ->
+            if (resp.isSuccessful) loadAll()
+            else _errorMessage.value = "Claim failed: ${resp.code()}"
+        }
+    }
+
+    fun removeLost(id: Long) = viewModelScope.launch {
+        api.deleteLost(id)
+        loadAll()
+    }
+
+    fun removeFound(id: Long) = viewModelScope.launch {
+        api.deleteFound(id)
+        loadAll()
+    }
+    fun claimFound(id: Long) = viewModelScope.launch {
+        api.claimFound(id).let { resp ->
+            if (resp.isSuccessful) loadAll()
+            else _errorMessage.value = "Claim failed: ${resp.code()}"
         }
     }
 }

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
+        android:name=".FiuLostAndFound"
         android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,11 +13,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FIULostAndFound">
-        <activity
-            android:name=".SubmitItemActivity"
-            android:exported="false"
-            android:label="@string/title_activity_submit_item"
-            android:theme="@style/Theme.FIULostAndFound" />
         <activity
             android:name=".FoundItemsActivity"
             android:exported="false"
@@ -39,6 +35,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".AddItemActivity" />
+        <activity
+            android:name=".ItemDetailActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

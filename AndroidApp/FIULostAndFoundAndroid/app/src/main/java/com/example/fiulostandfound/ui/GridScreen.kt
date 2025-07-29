@@ -1,11 +1,15 @@
 package com.example.fiulostandfound.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -15,16 +19,16 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.fiulostandfound.data.Item
 
-/**
- * A two-column grid screen that shows all the items in `itemsList`.
- */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GridScreen(
     title: String,
-    itemsList: List<Item>
+    itemsList: List<Item>,
+    onItemClick: (Item) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -47,7 +51,21 @@ fun GridScreen(
                 .padding(padding)
         ) {
             items(itemsList) { item ->
-                ItemCard(item)  // Make sure ItemCard is also in this file or imported
+                Card(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth()
+                        .clickable { onItemClick(item) }  // ← item is known as Item
+                ) {
+                    AsyncImage(
+                        model = item.imageUrl,
+                        contentDescription = item.title,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                    )
+                    item.title?.let { Text(it, Modifier.padding(16.dp)) }
+                }
             }
         }
     }
